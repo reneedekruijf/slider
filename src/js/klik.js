@@ -4,15 +4,30 @@ const slide = document.querySelector('.slide-group');
 const left = document.querySelector('.button-left');
 const right = document.querySelector('.button-right');
 
+slide.style.overflow = 'hidden';
+left.innerHTML = "<";
+right.innerHTML = ">";
+
 let isDown = false;
 let startX;
 let scrollLeft;
 
-function scroll() {
+function scroll(e) {
+  if (!isDown) return;
+  e.preventDefault();
+  const x = e.pageX - slide.offsetLeft;
+  const walk = (x - startX) * 3;
+  const result = scrollLeft - walk;
+  slide.scrollLeft = result;
+}
+
+//! scroll on click and keep scrolling if the mouse is down
+// buttons to scroll
+function clickScroll() {
   if (this === left) {
-    console.log('left');
+    slide.scrollLeft += 100;
   } else {
-    console.log('right');
+    slide.scrollLeft -= 100;
   }
 }
 
@@ -30,13 +45,8 @@ slide.addEventListener('mouseup', () => {
   isDown = false;
 });
 
-slide.addEventListener('mousemove', (e) => {
-  if (!isDown) return;
-  e.preventDefault();
-  const x = e.pageX - slide.offsetLeft;
-  const walk = (x - startX) * 3;
-  slide.scrollLeft = scrollLeft - walk;
-});
+slide.addEventListener('mousemove', scroll);
 
-left.addEventListener('click', scroll);
-right.addEventListener('click', scroll);
+
+left.addEventListener('click', clickScroll);
+right.addEventListener('click', clickScroll);
